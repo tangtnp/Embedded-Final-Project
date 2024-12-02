@@ -1,0 +1,120 @@
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents); // Parse incoming JSON
+  var properties = PropertiesService.getScriptProperties(); // Get properties service
+  
+  // Get email address from the sheet (e.g., cell A1)
+  var emailAddress = sheet.getRange("O3").getValue(); // Adjust range if needed
+
+  // Append new data to the Google Sheet
+  if (data.method === "append") {
+    sheet.appendRow([
+      new Date(), // Timestamp from Google Sheets
+      data.phData,
+      data.tempData,
+      data.weightData,
+      data.waterLevelData,
+      data.servoStatus
+    ]);
+  } else if (data.method === "replace") {
+    sheet.clear(); // Clear the sheet and replace the data
+    sheet.appendRow([
+      "Sheet Time", 
+      "PHSensor", 
+      "TempSensor", 
+      "WeighSensor", 
+      "WaterLevelSensor", 
+      "ServoStatus"
+    ]);
+    sheet.appendRow([
+      new Date(), // Timestamp from Google Sheets
+      data.phData,
+      data.tempData,
+      data.weightData,
+      data.waterLevelData,
+      data.servoStatus
+    ]);
+  }
+
+  let issues = [];
+
+  // Define issue keys for properties
+  let issueKeys = {
+    highPH: "emailSentHighPH",
+    lowPH: "emailSentLowPH",
+    tempOutOfRange: "emailSentTempOutOfRange",
+    lowWeight: "emailSentLowWeight",
+    lowWaterLevel: "emailSentLowWaterLevel"
+  };
+
+  // Check pH data
+  if (data.phData >= 8.5) {
+    issues.push({ 
+      key: issueKeys.highPH, 
+      message: "The pH level is too high (" + data.phData + "). It should be between 6.5 and 8.5." 
+    });
+  } else if (data.phData <= 6.5) {
+    issues.push({ 
+      key: issueKeys.lowPH, 
+      message: "The pH level is too low (" + data.phData + "). It should be between 6.5 and 8.5." 
+    });
+  }
+
+  // Check temperature data
+  if (data.tempData < 18 || data.tempData > 30) {
+    issues.push({ 
+      key: issueKeys.tempOutOfRange, 
+      message: "The temperature is outside the safe range (" + data.tempData + "°C). It should be between 18°C and 30°C." 
+    });
+  }
+
+  // Check weight data
+  if (data.weightData < 60) { // Adjust the threshold as needed
+    issues.push({ 
+      key: issueKeys.lowWeight, 
+      message: "The weight sensor indicates insufficient food or load (" + data.weightData + "g)." 
+    });
+  }
+
+  // Check water level data
+  if (data.waterLevelData === false) {
+    issues.push({ 
+      key: issueKeys.lowWaterLevel, 
+      message: "The water level is low! Please check the tank." 
+    });
+  }
+
+  // Process each issue and send email if necessary
+  // let address = "janny20.1.2549@gmail.com";
+  let subjectPrefix = "Fish Tank Alert: ";
+  
+  issues.forEach(issue => {
+    let emailSent = properties.getProperty(issue.key);
+    if (!emailSent) {
+      // Send the email for this issue
+      let subject = subjectPrefix + issue.message.split(':')[0]; // Create a concise subject
+      let body = "Hello,\n\nThe following issue was detected:\n\n" + issue.message + "\n\nPlease address this promptly.\n\nBest regards,\nFish Tank Monitoring System";
+      MailApp.sendEmail(emailAddress, subject, body);
+      
+      // Mark this issue's email as sent
+      properties.setProperty(issue.key, "true");
+    }
+  });
+
+  // Reset email flags for resolved issues
+  if (data.phData < 8.5 && data.phData > 6.5) {
+    properties.deleteProperty(issueKeys.highPH);
+    properties.deleteProperty(issueKeys.lowPH);
+  }
+  if (data.tempData >= 18 && data.tempData <= 30) {
+    properties.deleteProperty(issueKeys.tempOutOfRange);
+  }
+  if (data.weightData >= 100) {
+    properties.deleteProperty(issueKeys.lowWeight);
+  }
+  if (data.waterLevelData === true) {
+    properties.deleteProperty(issueKeys.lowWaterLevel);
+  }
+
+  return ContentService.createTextOutput("Data received successfully");
+}
