@@ -9,7 +9,7 @@
 
 #define WIFI_SSID "Sake"
 #define WIFI_PASSWORD "987123654"
-#define API_KEY "AIzaSyANdU9ClF_-Ew1KdQZrsd-0ZYh6dv_mcf8"
+#define API_KEY "API_KEY"
 #define DATABASE_URL "https://fishtank-2b906-default-rtdb.asia-southeast1.firebasedatabase.app/"
 
 #define waterlevelPIN 39
