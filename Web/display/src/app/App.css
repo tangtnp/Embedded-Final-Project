@@ -1,0 +1,192 @@
+/* Base styles for overall layout */
+.App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #acdae9; /* Aquarium-themed blue background */;
+  }
+  
+  /* Video container */
+.video-container {
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 10px;
+    display: flex; /* Enable Flexbox */
+    align-items: center; /* Vertically center */
+    justify-content: center; /* Horizontally center */
+    background-color: #d6eaff; /* Light blue for video container */
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+  
+  /* Video frame */
+  .video-frame {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Scale video to fit container while maintaining aspect ratio */
+    border-radius: 8px;
+  }
+  
+  /* Values container */
+  .values-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-sizing: border-box;
+    align-items: center;
+  }
+  
+  /* Row layout */
+  .value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Individual value box */
+  .value {
+    color: black;
+    flex: 1;
+    background-color: #c8fbff;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1.2rem; /* Scalable font */
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid #015cbd; /* Add border color */
+  }
+  
+  .valueNotify {
+    color: white;
+    flex: 1;
+    background-color: #e90000;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 1.2rem; /* Scalable font */
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid #fbbdbd; /* Add border color */
+  }
+  
+  /* Toggle button */
+  .toggle-button {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 18px;
+    background-color: #006aff;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Hover state */
+  .toggle-button.hover {
+    background-color: #0056b3;
+  }
+  
+  /* Open state */
+  .toggle-button.open {
+    background-color: #28a745;
+  }
+  
+  /* Disabled state */
+  .toggle-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  /* Responsive adjustments for tablets and computers (default) */
+  @media (min-width: 768px) {
+    .values-container {
+      flex-direction: column;
+      gap: 20px; /* Larger gaps */
+    }
+  
+    .value-row {
+      flex-direction: row;
+    }
+  }
+  
+  /* Responsive adjustments for phones */
+  @media (max-width: 767px) {
+    .App {
+      flex-direction: column;
+    }
+  
+    .video-container {
+      max-width: 100%;
+      aspect-ratio: 16 / 9;
+    }
+  
+    .values-container {
+      flex-direction: column;
+      gap: 10px; /* Smaller gap for stacking */
+    }
+  
+    .value-row {
+      flex-direction: column; /* Stack all values in one column */
+      align-items: center;
+      gap: 10px;
+    }
+  
+    .value,
+    .valueNotify,
+    .toggle-button {
+      flex: none; /* Remove flex behavior */
+      width: 90%; /* Consistent size across all devices */
+      max-width: 400px; /* Lock size proportionally */
+      font-size: 1rem; /* Scalable font for smaller screens */
+      padding: 10px;
+    }
+  }
+  
+
+  /* Overlay container for values in the video stream */
+.video-overlay {
+  position: absolute; /* Position it over the video */
+  top: 10px; /* Adjust top position */
+  right: 10px; /* Adjust right position */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align text to the right */
+  gap: 5px; /* Spacing between values */
+  background-color: rgba(0, 0, 0, 0.5); /* Transparent black background */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px; /* Add some padding */
+  z-index: 1; /* Ensure it appears above the video */
+  color: #fff; /* White text for readability */
+  font-size: 1rem; /* Scalable font */
+  font-weight: bold;
+}
+
+/* Add a relative container to position the overlay correctly */
+.video-container {
+  position: relative; /* Make container the reference for overlay positioning */
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
